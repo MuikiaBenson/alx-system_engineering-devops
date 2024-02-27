@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# This script kills the 7-highlander process without using kill or killall
+
+# Start the highlander script in the background
+./7-highlander &
+
+# Capture the PID of the background process
+pid=$(pgrep -o 7-highlander)
+
+# Wait for user input in the foreground
+read -rp "Press Enter to kill the process: "
+
+# Use a SIGKILL signal to terminate the background process
+kill -SIGKILL "$pid"
