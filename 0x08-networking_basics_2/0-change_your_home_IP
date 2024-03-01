@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Script: 0-change_your_home_IP
+# Description: Configures an Ubuntu server with specific IP address resolutions.
+#   - localhost resolves to 127.0.0.2
+#   - facebook.com resolves to 8.8.8.8
+
+# Check if script is run with sudo
+if [ "$EUID" -ne 0 ]; then
+  echo "Please run with sudo or as root."
+  exit 1
+fi
+
+# Backup the hosts file
+cp /etc/hosts /etc/hosts.backup
+
+# Update localhost and facebook.com entries in the hosts file
+echo "127.0.0.2 localhost" >> /etc/hosts
+echo "8.8.8.8 facebook.com" >> /etc/hosts
+
+echo "Configuration completed successfully."
+
+# Print the updated hosts file
+cat /etc/hosts
+
