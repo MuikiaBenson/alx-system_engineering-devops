@@ -1,46 +1,48 @@
 #!/usr/bin/python3
 """
-Export data from JSONPlaceholder API to JSON format
+Script to export data from JSONPlaceholder REST API
+and save it in JSON format.
 """
+
 import json
 import requests
-
-
-def export_todo_all_employees():
-    """
-    Fetches data from JSONPlaceholder API and exports it to JSON format
-    """
-    # Fetching data from the API
-    users_url = "https://jsonplaceholder.typicode.com/users"
-    todos_url = "https://jsonplaceholder.typicode.com/todos"
-
-    users_response = requests.get(users_url)
-    todos_response = requests.get(todos_url)
-
-    users = users_response.json()
-    todos = todos_response.json()
-
-    # Preparing the data
-    data = {}
-    for user in users:
-        user_id = str(user["id"])  # Converting user ID to string
-        username = user["username"]
-        user_tasks = [
-            {
-                "username": username,
-                "task": todo["title"],
-                "completed": todo["completed"]
-            }
-            for todo in todos if todo["userId"] == user_id
-        ]
-        data[user_id] = user_tasks
-
-    # Writing data to a JSON file
-    with open("todo_all_employees.json", "w") as json_file:
-        json.dump(data, json_file, indent=4)
-
-    print("Data exported to todo_all_employees.json")
-
+import sys
 
 if __name__ == "__main__":
-    export_todo_all_employees()
+    user_id = sys.argv[1] if len(sys.argv) == 2 else None
+    base_url = 'https://jsonplaceholder.typicode.com'
+
+    if user_id:
+        url = f'{base_url}/users/{user_id}'
+        response = requests.get(url)
+        username = response.json().get('username')
+        url = f'{base_url}/todos?userId={user_id}'
+    else:
+        url = f'{base_url}/todos'
+
+    tasks = requests.get(url).json()
+
+    if user_id:
+        data = {user_id: []}
+        for task in tasks:
+            data[user_id].append({
+                "username": username,
+                "task": task['title'],
+                "completed": task['completed']
+            })
+    else:
+        data = {}
+        for task in tasks:
+            user_id = task['userId']
+            if user_id not in data:
+                data[user_id] = []
+            user_url = f'{base_url}/users/{user_id}'
+            username = requests.get(user_url).json()['username']
+            data[user_id].append({
+                "username": username,
+                "task": task['title'],
+                "completed": task['completed']
+            })
+
+    with open('todo_all_employees.json', 'w') as json_file:
+        json.dump(data, json_file)
