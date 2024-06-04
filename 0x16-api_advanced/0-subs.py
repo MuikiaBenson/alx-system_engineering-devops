@@ -1,15 +1,16 @@
 #!/usr/bin/python3
-'''Module to interact with the Reddit API.
+'''A module to interract with the Reddit API.
 '''
 import requests
 
+
 BASE_URL = 'https://www.reddit.com'
-'''Base URL for Reddit's API.
+'''Reddit's base API URL.
 '''
 
 
 def number_of_subscribers(subreddit):
-    '''Fetches the number of subscribers for a specified subreddit.
+    '''Retrieves the number of subscribers in a given subreddit.
 
     Args:
         subreddit (str): The subreddit to query.
@@ -28,16 +29,11 @@ def number_of_subscribers(subreddit):
         ])
     }
 
-    try:
-        response = requests.get(
-            '{}/r/{}/about/.json'.format(BASE_URL, subreddit),
-            headers=api_headers,
-            allow_redirects=False
-        )
-
-        if response.status_code == 200:
-            return response.json()['data']['subscribers']
-        else:
-            return 0
-    except requests.RequestException:
-        return 0
+    res = requests.get(
+        '{}/r/{}/about/.json'.format(BASE_URL, subreddit),
+        headers=api_headers,
+        allow_redirects=False
+    )
+    if res.status_code == 200:
+        return res.json()['data']['subscribers']
+    return 0

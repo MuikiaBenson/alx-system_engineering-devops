@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-'''A module containing functions for working with the Reddit API.
+'''Module to interact with the Reddit API and retrieve subreddit data.
 '''
 import requests
 
@@ -11,6 +11,12 @@ BASE_URL = 'https://www.reddit.com'
 
 def top_ten(subreddit):
     '''Retrieves the title of the top ten posts from a given subreddit.
+
+    Args:
+        subreddit (str): The name of the subreddit to query.
+
+    Returns:
+        None
     '''
     api_headers = {
         'Accept': 'application/json',
