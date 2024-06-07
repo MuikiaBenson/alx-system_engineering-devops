@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Installs and sets up HAProxy
+
+set -e
+
+apt-get update
+apt-get install -y software-properties-common
+add-apt-repository -y ppa:vbernat/haproxy-1.8
+apt-get -y update
+apt-get install -y haproxy=1.8.\*
+
+echo "ENABLED=1" > /etc/default/haproxy
+
+# Backup the existing HAProxy configuration file
+cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.bak
+
+# Update the HAProxy configuration file to listen to web-01 and web-02 servers
+cat <<EOF >> /etc/haproxy/haproxy.cfg
+
+listen load_balancer
+    bind *:80
+    mode http
+    balance roundrobin
+    option httpclose
+    option forwardfor
+    server 17272-web-01 52.91.121.146:80 check
+    server 17272-web-02 3.85.136.181:80 check
+EOF
+
+# Enable and start HAProxy service using systemd
+systemctl enable haproxy
+systemctl start haproxy
+
+echo "HAProxy installation and configuration complete."
