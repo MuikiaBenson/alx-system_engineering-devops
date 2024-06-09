@@ -1,3 +1,6 @@
+![Postmortem Image](../../Pictures/Screenshots/postmortem.png)
+
+
 Postmortem: E-commerce Platform Outage
 Issue Summary
 
